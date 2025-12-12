@@ -1,0 +1,639 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Booking Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <div>
+                <h1>Room Booking Admin Dashboard</h1>
+                <p class="subtitle">Manage room bookings, events, and payments</p>
+            </div>
+            <button onclick="logout()" class="btn btn-outline" style="border-color: #e5e7eb;">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Logout
+            </button>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <div class="tabs-list">
+                <button class="tab-trigger active" data-tab="dashboard">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Dashboard
+                </button>
+                <button class="tab-trigger" data-tab="queue">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                    </svg>
+                    Booking Queue
+                </button>
+                <button class="tab-trigger" data-tab="payments">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    Payment Status
+                </button>
+                <button class="tab-trigger" data-tab="history">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3v5h5"></path>
+                        <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path>
+                    </svg>
+                    History
+                </button>
+            </div>
+
+            <!-- Dashboard Tab Content -->
+            <div class="tab-content active" id="dashboard-tab">
+                <div class="dashboard-grid">
+                    <div class="calendar-section">
+                        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+                            <button class="btn btn-primary" style="width: 100%;" id="addEventBtn">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Add Event
+                            </button>
+                            <button class="btn btn-destructive" style="width: 100%;" id="bulkCancelBtn">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                                Bulk Cancel by Room
+                            </button>
+                        </div>
+                        <div class="card">
+                            <div class="card-header" style="margin-bottom: 10px;">
+                                <h2>Calendar</h2>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <button class="btn btn-outline btn-sm" id="prevMonth">&lt;</button>
+                                    <span id="currentMonthYear" style="font-weight: 600; min-width: 120px; text-align: center;"></span>
+                                    <button class="btn btn-outline btn-sm" id="nextMonth">&gt;</button>
+                                </div>
+                            </div>
+                            <div id="calendar" class="calendar-grid"></div>
+                            <div id="selectedDateEvents" style="margin-top: 20px; border-top: 1px solid #e5e7eb; padding-top: 15px; display: none;">
+                                <h3 style="font-size: 16px; margin-bottom: 10px;">Bookings for <span id="selectedDateLabel"></span></h3>
+                                <div id="dayBookingsList"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bookings-section">
+                        <!-- Dashboard Filters -->
+                        <div class="card filter-card" style="margin-bottom: 16px;">
+                            <div class="filter-header">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                                    </svg>
+                                    <h3 style="margin: 0; font-size: 14px; font-weight: 500;">Filters</h3>
+                                </div>
+                                <button class="btn btn-ghost btn-sm" id="clearFilters" style="display: none;">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                                    </svg>
+                                    Clear All
+                                </button>
+                            </div>
+                            <div class="filter-grid">
+                                <div class="input-wrapper">
+                                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <path d="m21 21-4.35-4.35"></path>
+                                    </svg>
+                                    <input type="text" id="searchFilter" placeholder="Search by name or purpose..." class="filter-input">
+                                </div>
+                                <select id="roomFilter" class="filter-select">
+                                    <option value="all">All Rooms</option>
+                                    <option value="Auditorium">Auditorium</option>
+                                    <option value="Library">Library</option>
+                                    <option value="Grounds">Grounds</option>
+                                    <option value="AVR">AVR</option>
+                                    <option value="Gym">Gym</option>
+                                </select>
+                                <select id="statusFilter" class="filter-select">
+                                    <option value="all">All Statuses</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="accepted">Accepted</option>
+                                    <option value="refused">Refused</option>
+                                </select>
+                                <select id="paymentFilter" class="filter-select">
+                                    <option value="all">All Payments</option>
+                                    <option value="paid">Paid</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="unpaid">Unpaid</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Upcoming Bookings This Week</h2>
+                                <span class="badge badge-secondary" id="upcomingCount">0 bookings</span>
+                            </div>
+                            <div class="scroll-area" id="upcomingBookings"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Queue Tab Content -->
+            <div class="tab-content" id="queue-tab">
+                <!-- Queue Filters -->
+                <div class="card filter-card" style="margin-bottom: 16px;">
+                    <div class="filter-header">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                            </svg>
+                            <h3 style="margin: 0; font-size: 14px; font-weight: 500;">Filters</h3>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" id="clearQueueFilters" style="display: none;">
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                            Clear All
+                        </button>
+                    </div>
+                    <div class="filter-grid">
+                        <div class="input-wrapper">
+                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            <input type="text" id="queueSearchFilter" placeholder="Search by name or purpose..." class="filter-input">
+                        </div>
+                        <select id="queueRoomFilter" class="filter-select">
+                            <option value="all">All Rooms</option>
+                            <option value="Auditorium">Auditorium</option>
+                            <option value="Library">Library</option>
+                            <option value="Grounds">Grounds</option>
+                            <option value="AVR">AVR</option>
+                            <option value="Gym">Gym</option>
+                        </select>
+                        <select id="queueStatusFilter" class="filter-select">
+                            <option value="all">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="refused">Refused</option>
+                        </select>
+                        <select id="queuePaymentFilter" class="filter-select">
+                            <option value="all">All Payments</option>
+                            <option value="paid">Paid</option>
+                            <option value="pending">Pending</option>
+                            <option value="unpaid">Unpaid</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Booking Requests Queue</h2>
+                        <span class="badge badge-secondary" id="pendingCount">0 pending</span>
+                    </div>
+                    <div class="scroll-area">
+                        <table class="table" id="queueTable">
+                            <thead>
+                                <tr>
+                                    <th>Submitted</th>
+                                    <th>Name</th>
+                                    <th>Contact Info</th>
+                                    <th>Room</th>
+                                    <th>Date & Time</th>
+                                    <th>Purpose</th>
+                                    <th>Attendees</th>
+                                    <th>Confirmation Visit</th>
+                                    <th>Payment</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="queueTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments Tab Content -->
+            <div class="tab-content" id="payments-tab">
+                <div class="card">
+                    <h2>Payment Status Overview</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card stat-paid">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Paid</p>
+                                <p class="stat-value" id="paidCount">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-pending">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Pending</p>
+                                <p class="stat-value" id="pendingPaymentCount">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-unpaid">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Unpaid</p>
+                                <p class="stat-value" id="unpaidCount">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-tabs">
+                        <div class="payment-tabs-list">
+                            <button class="payment-tab-trigger active" data-payment-tab="paid">Paid (<span id="paidTabCount">0</span>)</button>
+                            <button class="payment-tab-trigger" data-payment-tab="pending">Pending (<span id="pendingTabCount">0</span>)</button>
+                            <button class="payment-tab-trigger" data-payment-tab="unpaid">Unpaid (<span id="unpaidTabCount">0</span>)</button>
+                        </div>
+                        <div class="payment-tab-content active" id="paid-payment-tab">
+                            <table class="table" id="paidTable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Room</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Purpose</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paidTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="payment-tab-content" id="pending-payment-tab">
+                            <table class="table" id="pendingPaymentTable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Room</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Purpose</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingPaymentTableBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="payment-tab-content" id="unpaid-payment-tab">
+                            <table class="table" id="unpaidTable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Room</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Purpose</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="unpaidTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab Content -->
+            <div class="tab-content" id="history-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Booking History</h2>
+                            <p class="subtitle">Past and cancelled bookings</p>
+                        </div>
+                        <span class="badge badge-secondary" id="historyCount">0 records</span>
+                    </div>
+
+                    <div class="filters-grid">
+                        <input type="text" class="input" id="historySearch" placeholder="Search by name or purpose...">
+                        <select class="select" id="historyStatusFilter">
+                            <option value="all">All Status</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="refused">Refused</option>
+                        </select>
+                        <select class="select" id="historyRoomFilter">
+                            <option value="all">All Rooms</option>
+                            <option value="Auditorium">Auditorium</option>
+                            <option value="Library">Library</option>
+                            <option value="Grounds">Grounds</option>
+                            <option value="AVR">AVR</option>
+                            <option value="Gym">Gym</option>
+                        </select>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card stat-info">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Total Bookings</p>
+                                <p class="stat-value" id="historyTotalCount">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-success">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Completed</p>
+                                <p class="stat-value" id="historyCompletedCount">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-error">
+                            <div class="stat-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="stat-label">Cancelled</p>
+                                <p class="stat-value" id="historyCancelledCount">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scroll-area">
+                        <table class="table" id="historyTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Contact Info</th>
+                                    <th>Room</th>
+                                    <th>Time</th>
+                                    <th>Purpose</th>
+                                    <th>Attendees</th>
+                                    <th>Confirmation Visit</th>
+                                    <th>Payment</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Booking Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Booking Request</h2>
+                <button class="modal-close" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="input" id="editName">
+                    </div>
+                    <div class="form-group">
+                        <label>Room</label>
+                        <select class="select" id="editRoom">
+                            <option value="Auditorium">Auditorium</option>
+                            <option value="Library">Library</option>
+                            <option value="Grounds">Grounds</option>
+                            <option value="AVR">AVR</option>
+                            <option value="Gym">Gym</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="input" id="editEmail" placeholder="booker@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" class="input" id="editPhone" placeholder="+1 (555) 000-0000">
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" class="input" id="editDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Attendees</label>
+                        <input type="number" class="input" id="editAttendees">
+                    </div>
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" class="input" id="editStartTime">
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" class="input" id="editEndTime">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Purpose of Booking</label>
+                        <input type="text" class="input" id="editPurpose">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Confirmation Visit Date & Time</label>
+                        <p class="form-hint">Early visit to confirm reservation details</p>
+                        <input type="datetime-local" class="input" id="editAppointment">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Additional Notes</label>
+                        <textarea class="textarea" id="editNotes" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select class="select" id="editStatus">
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="refused">Refused</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Status</label>
+                        <select class="select" id="editPaymentStatus">
+                            <option value="paid">Paid</option>
+                            <option value="pending">Pending</option>
+                            <option value="unpaid">Unpaid</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEdit">Cancel</button>
+                <button class="btn btn-primary" id="saveEdit">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Event Modal -->
+    <div class="modal" id="addEventModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Add New Event</h2>
+                <button class="modal-close" id="closeAddEventModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Event Title</label>
+                    <input type="text" class="input" id="eventTitle" placeholder="Enter event title">
+                </div>
+                <div class="form-group">
+                    <label>Event Date</label>
+                    <input type="date" class="input" id="eventDate">
+                </div>
+                <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div class="form-group">
+                        <label>Start Time</label>
+                        <input type="time" class="input" id="eventStartTime" min="07:00" max="18:00" value="07:00">
+                        <p class="form-hint">Bookings available 7am - 6pm</p>
+                    </div>
+                    <div class="form-group">
+                        <label>End Time</label>
+                        <input type="time" class="input" id="eventEndTime" min="07:00" max="18:00" value="18:00">
+                        <p class="form-hint">Bookings available 7am - 6pm</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <select class="select" id="eventLocation">
+                        <option value="">Select location...</option>
+                        <option value="Auditorium">Auditorium</option>
+                        <option value="Library">Library</option>
+                        <option value="Grounds">Grounds</option>
+                        <option value="AVR">AVR</option>
+                        <option value="Gym">Gym</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description (Optional)</label>
+                    <textarea class="textarea" id="eventDescription" rows="3" placeholder="Enter event description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Event Image URL (Optional)</label>
+                    <input type="url" class="input" id="eventImageUrl" placeholder="https://example.com/event-image.jpg">
+                    <div id="eventImagePreview" style="margin-top: 8px; display: none;">
+                        <img id="eventImagePreviewImg" src="" alt="Event preview" style="width: 100%; height: 128px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelAddEvent">Cancel</button>
+                <button class="btn btn-primary" id="saveAddEvent">Add Event</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Cancellation Modal -->
+    <div class="modal" id="bulkCancelModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2 style="display: flex; align-items: center; gap: 8px;">
+                    <svg class="icon" style="color: #dc2626;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    Bulk Cancellation
+                </h2>
+                <button class="modal-close" id="closeBulkCancelModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #6b7280; margin-bottom: 16px; font-size: 14px;">Cancel all reservations for a specific room within a date range and notify bookers via email.</p>
+                <div class="form-group">
+                    <label>Select Room</label>
+                    <select class="select" id="bulkCancelRoom">
+                        <option value="">Choose a room...</option>
+                        <option value="Auditorium">Auditorium</option>
+                        <option value="Library">Library</option>
+                        <option value="Grounds">Grounds</option>
+                        <option value="AVR">AVR</option>
+                        <option value="Gym">Gym</option>
+                    </select>
+                </div>
+                <div class="form-grid" style="margin-top: 12px; margin-bottom: 12px;">
+                    <div class="form-group">
+                        <label>From Date & Time</label>
+                        <input type="datetime-local" class="input" id="bulkCancelStart">
+                    </div>
+                    <div class="form-group">
+                        <label>To Date & Time</label>
+                        <input type="datetime-local" class="input" id="bulkCancelEnd">
+                    </div>
+                </div>
+                <div id="bulkCancelInfo" style="display: none; padding: 12px; background-color: #fef3c7; border: 1px solid #fbbf24; border-radius: 8px; margin-bottom: 16px;">
+                    <p id="bulkCancelInfoText" style="margin: 0; font-size: 14px; color: #92400e;"></p>
+                </div>
+                <div class="form-group">
+                    <label>Cancellation Explanation *</label>
+                    <textarea class="textarea" id="cancellationReason" rows="4" placeholder="Enter the reason for cancellation (this will be sent to bookers via email)..." required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBulkCancel">Cancel</button>
+                <button class="btn btn-destructive" id="confirmBulkCancel" disabled>Confirm Cancellation</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 12px;"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

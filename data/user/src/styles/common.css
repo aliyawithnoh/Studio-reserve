@@ -1,0 +1,157 @@
+/* Common Styles for HTML Pages */
+
+:root {
+    /* Booking System Colors */
+    --header-bg: #475569;
+    --header-text: #ffffff;
+    --header-border: #fbbf24;
+    --room-bg: #ffffff;
+    --room-border: #d1d5db;
+    --room-selected-bg: #e2e8f0;
+    --room-selected-border: #94a3b8;
+    --room-capacity-bg: #64748b;
+    --room-capacity-text: #ffffff;
+    --calendar-bg: #ffffff;
+    --calendar-border: #d1d5db;
+    --calendar-today-bg: #dbeafe;
+    --calendar-today-text: #1e3a8a;
+    --calendar-today-ring: #60a5fa;
+    --calendar-selected-bg: #1e293b;
+    --calendar-selected-text: #ffffff;
+    --calendar-booked-bg: #e5e7eb;
+    --calendar-booked-text: #374151;
+    --calendar-hover: #f3f4f6;
+    --calendar-dot: #3b82f6;
+    --calendar-full-bg: #fca5a5;
+    --calendar-busy-bg: #fdba74;
+    --calendar-light-bg: #fde68a;
+    --timeslot-available-bg: #d1fae5;
+    --timeslot-available-text: #065f46;
+    --timeslot-available-icon: #047857;
+    --timeslot-booked-bg: #0d9488;
+    --timeslot-booked-text: #ffffff;
+    --badge-full: #f87171;
+    --badge-busy: #34d399;
+    --badge-light: #6ee7b7;
+    --badge-available: #2dd4bf;
+    --chat-bg: #ffffff;
+    --chat-border: #d1d5db;
+    --chat-user-msg: #3b82f6;
+    --chat-user-text: #ffffff;
+    --chat-assistant-msg: #f3f4f6;
+    --chat-assistant-text: #1f2937;
+    --chat-badge-bg: #3b82f6;
+    --chat-badge-text: #ffffff;
+    --button-primary: #10b981;
+    --button-primary-hover: #059669;
+    --stats-bg: #ffffff;
+    --stats-text: #6b7280;
+    --stats-busy-bg: #bfdbfe;
+    --page-bg: #f9fafb;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--page-bg);
+    color: #1f2937;
+    line-height: 1.5;
+}
+
+.header {
+    background-color: var(--header-bg);
+    color: var(--header-text);
+    padding: 1.25rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--button-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--button-primary-hover);
+}
+
+.btn-secondary {
+    background-color: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #4b5563;
+}
+
+.toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.toast {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: slideIn 0.3s ease-out;
+}
+
+.toast.success {
+    border-left: 4px solid #10b981;
+}
+
+.toast.error {
+    border-left: 4px solid #ef4444;
+}
+
+.toast-message {
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

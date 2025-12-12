@@ -1,0 +1,77 @@
+{
+  "forecast": {
+    "summary": {
+      "totalBookings": 14,
+      "mostPopularRoom": "Auditorium",
+      "peakHours": "12:00 PM - 3:00 PM",
+      "averageAttendees": 389,
+      "utilizationRate": "68%"
+    },
+    "roomAnalytics": [
+      {
+        "roomId": "auditorium",
+        "roomName": "Auditorium",
+        "totalBookings": 5,
+        "utilizationRate": "72%",
+        "peakDays": ["Tuesday", "Thursday"],
+        "averageAttendees": 160,
+        "trend": "increasing",
+        "predictedNextWeek": 6
+      },
+      {
+        "roomId": "library",
+        "roomName": "Library",
+        "totalBookings": 5,
+        "utilizationRate": "65%",
+        "peakDays": ["Monday", "Wednesday"],
+        "averageAttendees": 30,
+        "trend": "stable",
+        "predictedNextWeek": 5
+      },
+      {
+        "roomId": "grounds",
+        "roomName": "Grounds",
+        "totalBookings": 4,
+        "utilizationRate": "67%",
+        "peakDays": ["Monday", "Friday"],
+        "averageAttendees": 775,
+        "trend": "increasing",
+        "predictedNextWeek": 5
+      }
+    ],
+    "weeklyTrends": [
+      {
+        "week": "Current Week",
+        "totalBookings": 14,
+        "auditorium": 5,
+        "library": 5,
+        "grounds": 4
+      },
+      {
+        "week": "Next Week (Predicted)",
+        "totalBookings": 16,
+        "auditorium": 6,
+        "library": 5,
+        "grounds": 5
+      }
+    ],
+    "recommendations": [
+      {
+        "type": "peak-time-alert",
+        "message": "Consider adding more time slots during 12:00 PM - 3:00 PM",
+        "priority": "medium"
+      },
+      {
+        "type": "capacity-warning",
+        "message": "Auditorium bookings increasing - ensure adequate staffing",
+        "priority": "high"
+      },
+      {
+        "type": "optimization",
+        "message": "Grounds shows high demand on Fridays - consider extended hours",
+        "priority": "low"
+      }
+    ],
+    "lastUpdated": "2025-01-04T10:00:00Z"
+  }
+}

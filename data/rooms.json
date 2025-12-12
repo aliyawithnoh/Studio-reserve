@@ -1,0 +1,30 @@
+
+{
+  "rooms": [
+    {
+      "id": "auditorium",
+      "name": "Auditorium",
+      "capacity": 1000
+    },
+    {
+      "id": "library",
+      "name": "Library",
+      "capacity": 100
+    },
+    {
+      "id": "grounds",
+      "name": "Grounds",
+      "capacity": 1800
+    },
+    {
+      "id": "avr",
+      "name": "AVR",
+      "capacity": 150
+    },
+    {
+      "id": "gym",
+      "name": "Gym",
+      "capacity": 2000
+    }
+  ]
+}
